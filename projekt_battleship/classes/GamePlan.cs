@@ -120,15 +120,17 @@ public ShotResult ProcessShot(int[] target)
         board[row, column] = 'M';
         return ShotResult.Miss; // Miss
     }
-    else if (board[row, column] == 'O' || board[row, column] == 'X')
-    {
-        return ShotResult.AlreadyShot; // Already shot there
-    }
-    else
+    else if (board[row, column] == 'S')
     {
         board[row, column] = 'H';
         return ShotResult.Hit; // Hit
+    } 
+    else if (board[row, column] == 'H' || board[row, column] == 'M')
+    {
+        return ShotResult.AlreadyShot; // Already shot there
     }
+    // Default return if none of the conditions match
+    return ShotResult.AlreadyShot;
 }
 
         // Method to check if all ships on the board are destroyed

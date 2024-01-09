@@ -1,4 +1,5 @@
 using BattleshipGame;
+using System.Threading;
 
 namespace BattleshipGame
 {
@@ -6,13 +7,22 @@ class Game
 {
     private GamePlan playerBoard;
     private GamePlan computerBoard;
-
-    // Constructor to initialize player and computer boards
-    public Game()
+    private Action startMenuScreen;
+    
+   // Constructor to initialize player and computer boards
+    public Game(Action startMenuScreen)
     {
         playerBoard = new GamePlan();
         computerBoard = new GamePlan();
+        this.startMenuScreen = startMenuScreen;
     }
+
+     private ConsoleKeyInfo ReadKeyCaseInsensitive()
+        {
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            bool altKeyPressed = (key.Modifiers & ConsoleModifiers.Alt) != 0;
+            return new ConsoleKeyInfo(char.ToLower(key.KeyChar), key.Key, altKeyPressed, false, false);
+        }
 
  public void Play()
 {
@@ -21,7 +31,7 @@ class Game
     // Place ships on player and computer boards
     playerBoard.PlaceShips();
     computerBoard.PlaceShips();
-
+    
     // Continue playing until all ships are destroyed on one side
     while (!playerBoard.AllShipsDestroyed() && !computerBoard.AllShipsDestroyed())
     {
@@ -32,7 +42,7 @@ class Game
             ComputerTurn();
         }
     }
-
+   
     // Display game over message and determine the winner
     Console.Clear();
     Console.WriteLine("G A M E  O V E R!");
@@ -48,6 +58,28 @@ class Game
 
     Console.ReadLine();
 }
+
+private void WaitForEnterContinueOrZExit(){
+     Console.WriteLine("\nPress Enter to continue or Z to exit the game and go back to the menu. \nYour game will not be saved.");
+
+    ConsoleKeyInfo key;
+    do
+    {
+        // Read a key, including Enter
+        key = ReadKeyCaseInsensitive();
+
+        if (key.Key == ConsoleKey.Z)
+        {
+            Console.Clear();
+            startMenuScreen();
+            return; // Exit the method to return to the menu
+        }
+
+        // If the pressed key is not Enter, keep looping
+    } while (key.Key != ConsoleKey.Enter);
+}
+
+
 private void PlayerTurn()
 {
     // Display the player's game plan before taking the shot
@@ -58,44 +90,57 @@ private void PlayerTurn()
     Console.WriteLine("\nComputer's gameplan:");
     computerBoard.ShowGamePlan(true);
 
-Console.WriteLine("\nYour Turn:"); 
+    Console.WriteLine("\nYour Turn:");
 
     Console.WriteLine(); // Add an empty line
 
-    int[] target = GetTarget();
-    ShotResult result = computerBoard.ProcessShot(target);
+    ShotResult result;
+    int[] target;
 
-    switch (result)
+    do
     {
-        case ShotResult.Hit:
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"You targeted {target[0]}-{target[1]}, HIT! Good job!");
-            Console.ResetColor(); // Reset color after printing
-            break;
-        case ShotResult.Miss:
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"You targeted {target[0]}-{target[1]}, MISS! Better luck next time!");
-             Console.ResetColor(); // Reset color after printing
-            break;
-        case ShotResult.AlreadyShot:
-            Console.WriteLine($"You targeted {target[0]}-{target[1]}, already shot there!");
-            break;
-    }
-    // Display the player's game plan after the shot
-    Console.WriteLine("\nYour updated game plan:");
-    playerBoard.ShowGamePlan(false);
+        target = GetTarget();
+        result = computerBoard.ProcessShot(target);
 
-    // Display the computer's game plan after the shot
-    Console.WriteLine("\nComputer's updated game plan:");
-    computerBoard.ShowGamePlan(true);
+        switch (result)
+        {
+            case ShotResult.Hit:
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"You targeted {target[0]}-{target[1]}, HIT! Good job!");
+                Console.ResetColor(); // Reset color after printing
+                break;
+            case ShotResult.Miss:
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"You targeted {target[0]}-{target[1]}, MISS! Better luck next time!");
+                Console.ResetColor(); // Reset color after printing
+                break;
+            case ShotResult.AlreadyShot:
+                Console.WriteLine($"You targeted {target[0]}-{target[1]}, already shot there!");
+                break;
+        }
+
+        // Display the player's game plan after the shot
+        Console.WriteLine("\nYour updated game plan:");
+        playerBoard.ShowGamePlan(false);
+
+        // Display the computer's game plan after the shot
+        Console.WriteLine("\nComputer's updated game plan:");
+        computerBoard.ShowGamePlan(true);
+
         // Move the cursor down to make space for the message
-    Console.WriteLine(); // Add an empty line
+        Console.WriteLine(); // Add an empty line
+
+        // If the result is AlreadyShot, prompt the player for a new target
+    } while (result == ShotResult.AlreadyShot);
+    WaitForEnterContinueOrZExit();
 
     // Pause and wait for Enter key press before moving to the next round
     Console.WriteLine("Press Enter to continue to the next round of the game.");
-    Console.ReadLine();
+    Console.WriteLine();
+    // Display the message at the bottom
+    Console.WriteLine(". . . . . . . . . . . . . . . . . . . . . . . . . . .");
+    Console.WriteLine("\nPress Z to exit the game and go back to the menu. \nYour game will not be saved.");
 }
-
 
   private void ComputerTurn()
 { // Clear the console before displaying the game plans
@@ -148,21 +193,39 @@ Console.WriteLine("\nYour Turn:");
 // Method to get target coordinates from the player
 private int[] GetTarget()
 {
-    Console.Write("Enter target coordinates (row, column): ");
-    string input = Console.ReadLine()!;
-    if (input != null)
-    {
-        string[] inputArray = input.Split(',');
+    int[] defaultValues = { -1, -1 };
 
-        if (inputArray.Length == 2 && int.TryParse(inputArray[0], out int row) && int.TryParse(inputArray[1], out int column))
+    while (true)
+    {
+        Console.Write("Enter target coordinates (row, column): ");
+        string input = Console.ReadLine()!;
+
+        if (input != null)
         {
-            return new int[] { row, column };
+            string[] inputArray = input.Split(',');
+
+            if (inputArray.Length == 2 && int.TryParse(inputArray[0], out int row) && int.TryParse(inputArray[1], out int column))
+            {
+                // Check if coordinates are within the valid range (0 to 6 inclusive)
+                if (row >= 0 && row < GamePlan.Size && column >= 0 && column < GamePlan.Size)
+                {
+                    return new int[] { row, column };
+                }
+                else
+                {
+                    Console.WriteLine("Invalid coordinates. Row and column can not be empty, must be between 0 and 6.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter valid coordinates. Row and column can not be empty, must be between 0 and 6.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter valid coordinates. Row and column can not be empty, must be between 0 and 6.");
         }
     }
-
-    // If input is null or parsing fails, return an array with default values
-    Console.WriteLine("Invalid input. Please enter valid coordinates.");
-    return new int[] { -1, -1 };
 }
 
  // Method to generate random target coordinates for the computer
