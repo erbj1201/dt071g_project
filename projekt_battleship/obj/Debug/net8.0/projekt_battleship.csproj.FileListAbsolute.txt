@@ -1,0 +1,14 @@
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\bin\Debug\net8.0\projekt_battleship.exe
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\bin\Debug\net8.0\projekt_battleship.deps.json
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\bin\Debug\net8.0\projekt_battleship.runtimeconfig.json
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\bin\Debug\net8.0\projekt_battleship.dll
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\bin\Debug\net8.0\projekt_battleship.pdb
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.AssemblyInfoInputs.cache
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.AssemblyInfo.cs
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.csproj.CoreCompileInputs.cache
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.dll
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\refint\projekt_battleship.dll
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.pdb
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\projekt_battleship.genruntimeconfig.cache
+C:\Users\Admin\OneDrive\Skrivbord\Webbutveckling\dt071g_programmering_i_c#.net\projekt\projekt_battleship\obj\Debug\net8.0\ref\projekt_battleship.dll
