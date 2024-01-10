@@ -10,7 +10,7 @@ namespace BattleshipGame
     class GamePlan
     {
         // size of the gameplan
-        public const int Size = 7;
+        public const int Size = 2;
 
         private char[,] board;
         private Ship[] ships;
@@ -20,10 +20,7 @@ namespace BattleshipGame
             board = new char[Size, Size];
             ships = new Ship[]
             {
-                new Ship(3),
-                new Ship(3),
-                new Ship(2),
-                new Ship(2)
+                new Ship(1),
             };
 
             InitializeGamePlan();
@@ -69,7 +66,7 @@ namespace BattleshipGame
 // Method to display the current state of the board
 public void ShowGamePlan(bool hideShips)
 {
-    Console.WriteLine("  0 1 2 3 4 5 6");
+    Console.WriteLine("  0 1");
 
     for (int i = 0; i < Size; i++)
     { Console.Write($"{i} ");
@@ -134,18 +131,28 @@ public ShotResult ProcessShot(int[] target)
 }
 
         // Method to check if all ships on the board are destroyed
-        public bool AllShipsDestroyed()
+      public bool AllShipsHit()
+{
+    foreach (Ship ship in ships)
+    {
+        if (!ship.IsHit())
         {
-            foreach (Ship ship in ships)
-            {
-                if (!ship.IsDestroyed())
-                {
-                    return false;
-                }
-            }
-            return true;
+            return false;
         }
-
+    }
+    
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            if (board[i, j] == 'S')
+            {
+                return false; // If any 'S' is found, at least one ship is not hit
+            }
+        }
+    }
+    return true; // No 'S' found, all ships are hit
+}
         // Method to get the value at a specific position on the board
         public char GetGamePlanValue(int row, int column)
         {

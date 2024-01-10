@@ -33,13 +33,15 @@ class Game
     computerBoard.PlaceShips();
     
     // Continue playing until all ships are destroyed on one side
-    while (!playerBoard.AllShipsDestroyed() && !computerBoard.AllShipsDestroyed())
+    while (!playerBoard.AllShipsHit() && !computerBoard.AllShipsHit())
     {
         PlayerTurn();
+        Console.WriteLine("Player Board - AllShipsSunk: " + playerBoard.AllShipsHit());
         // Check if all ships are destroyed after the player's turn
-        if (!computerBoard.AllShipsDestroyed())
+        if (!computerBoard.AllShipsHit())
         {
             ComputerTurn();
+            Console.WriteLine("Computer Board - AllShipsSunk: " + computerBoard.AllShipsHit());
         }
     }
    
@@ -47,16 +49,28 @@ class Game
     Console.Clear();
     Console.WriteLine("G A M E  O V E R!");
 
-    if (playerBoard.AllShipsDestroyed())
+    if (playerBoard.AllShipsHit())
     {
         Console.WriteLine("You were defeated by the computer! Computer wins! You lost!");
     }
-    else if (computerBoard.AllShipsDestroyed())
+    else if (computerBoard.AllShipsHit())
     {
         Console.WriteLine("Congratulations! You defeated the computer! You won!");
     }
+    // Display the exit to menu message
+Console.WriteLine("\nPress Z to exit and go back to the menu.");
 
-    Console.ReadLine();
+// Wait for Z key press to exit to menu
+while (true)
+{
+    ConsoleKeyInfo key = Console.ReadKey(true);
+    if (key.Key == ConsoleKey.Z)
+    {
+        Console.Clear();
+        startMenuScreen();
+        return; // Exit the method to return to the menu
+    }
+}
 }
 
 private void WaitForEnterContinueOrZExit(){
@@ -115,7 +129,7 @@ private void PlayerTurn()
                 Console.ResetColor(); // Reset color after printing
                 break;
             case ShotResult.AlreadyShot:
-                Console.WriteLine($"You targeted {target[0]}-{target[1]}, already shot there!");
+                Console.WriteLine($"You targeted {target[0]}-{target[1]}, you have already shot there! Try again.");
                 break;
         }
 
@@ -157,7 +171,11 @@ private void PlayerTurn()
     Console.WriteLine(); // Add an empty line
 
     // Get a random target for the computer
-    int[] target = GetRandomTarget();
+    int[] target;
+    do
+    {// Get a random target for the computer
+        target = GetRandomTarget();
+    } while (playerBoard.GetGamePlanValue(target[0], target[1]) == 'H' || playerBoard.GetGamePlanValue(target[0], target[1]) == 'M');
 
     // Process the shot on the player's board
     ShotResult result = playerBoard.ProcessShot(target);

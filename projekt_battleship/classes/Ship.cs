@@ -60,12 +60,13 @@ namespace BattleshipGame
         }
 
         // Method to handle a hit on the ship
-        public bool Hit(int[] target)
-        {
-          int row = target[0];
+public bool Hit(int[] target)
+{
+    int row = target[0];
     int column = target[1];
+
     // Check if the target is a valid position on the ship
-    if (row < 0 || row >= size || column < 0 || column >= 1)
+    if (row < 0 || row >= size || column < 0 || column >= size)
     {
         // Invalid target position
         return false;
@@ -92,10 +93,18 @@ namespace BattleshipGame
     // Ship is not destroyed yet
     return false;
 }
+
  // Method to check if the ship is destroyed
-        public bool IsDestroyed()
+        public bool IsHit()
+{
+    foreach (bool segmentHit in segments)
+    {
+        if (!segmentHit)
         {
-            return hits == size;
+            return false; // If any segment is not hit, the ship is not fully hit
         }
+    }
+    return true; // All segments are hit, the ship is fully hit
+}
     }
 }
