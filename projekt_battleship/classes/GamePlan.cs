@@ -1,61 +1,66 @@
+/*Class Gameplan by Erika Vestin HT 2023*/
+//Namespace
 namespace BattleshipGame
 {
-        public enum ShotResult
+    // Enum for result after shot
+    public enum ShotResult
     {
         Hit,
         Miss,
         AlreadyShot
     }
-    // Class representing the game board
+
+    // Class gameplan
     class GamePlan
     {
-        // size of the gameplan
-        public const int Size = 2;
+        // size gameplan
+        public const int Size = 7;
 
-        private char[,] board;
-        private Ship[] ships;
+        //properties with set, get methods
+        private char[,] Board { get; set; }
+        private Ship[] Ships { get; set; }
+
         // Constructor
         public GamePlan()
-        {
-            board = new char[Size, Size];
-            ships = new Ship[]
-            {
-                new Ship(1),
-            };
+        { //Create gameplan and ships
+            Board = new char[Size, Size];
+            Ships = [new Ship(2), new Ship(2), new Ship(3), new Ship(3)];
 
-            InitializeGamePlan();
-            PlaceShips();  // Place ships during the board initialization
+            CreateGamePlan();//Create game plan
+            PlaceShips(); // Place ships
         }
-        // Method to initialize the board with empty spaces
-        private void InitializeGamePlan()
+
+        // Create gamplan, empty spaces
+        private void CreateGamePlan()
         {
             for (int i = 0; i < Size; i++)
             {
                 Console.Write($"{i} ");
                 for (int j = 0; j < Size; j++)
                 {
-                    board[i, j] = ' ';
+                    Board[i, j] = ' ';
                 }
             }
         }
 
-        // Method to get a random position on the board
-        private int[] GetRandomPosition()
+        //get random position, gameplan
+        private static int[] GetRandomPosition()
         {
-            Random random = new Random();
+            Random random = new();
             int row = random.Next(0, Size);
             int column = random.Next(0, Size);
-            return new int[] { row, column };
+            return [row, column];
         }
 
-        // Method to place ships on the board
+        //place ships on gameplan
         public void PlaceShips()
-        {
-            foreach (Ship ship in ships)
+        { //Loop every ship
+            foreach (Ship ship in Ships)
             {
                 bool placed = false;
+                //Loop as long as not placed
                 while (!placed)
-                {
+                { //initialize random positions horizontal and vertically
                     int[] start = GetRandomPosition();
                     bool horizontal = new Random().Next(2) == 0;
                     placed = ship.PlaceShip(this, start, horizontal);
@@ -63,123 +68,129 @@ namespace BattleshipGame
             }
         }
 
-// Method to display the current state of the board
-public void ShowGamePlan(bool hideShips)
-{
-    Console.WriteLine("  0 1");
+        // Display gameplan
+        public void ShowGamePlan(bool hideShips)
+        { //column indexes
+            Console.WriteLine("  0 1 2 3 4 5 6 ");
+            //Loop every row
+            for (int i = 0; i < Size; i++)
+            //Show index row
+            {
+                Console.Write($"{i} ");
+                //Loop columns
+                for (int j = 0; j < Size; j++)
+                { //Value for current cell
+                    char cellValue = Board[i, j];
 
-    for (int i = 0; i < Size; i++)
-    { Console.Write($"{i} ");
-        for (int j = 0; j < Size; j++)
-        {
-            char cellValue = board[i, j];
-
-            // Check if it's the player's ship and we want to show it
-            if (cellValue == 'S' && !hideShips)
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("S ");
-                Console.ResetColor(); // Reset color after printing
-            }
-            else if (cellValue == 'H')
-            {
-                Console.ForegroundColor = ConsoleColor.Red; // Set color for hits
-                Console.Write("H ");
-                Console.ResetColor(); // Reset color after printing
-            }
-            else if (cellValue == 'M')
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow; // Set color for misses
-                Console.Write("M ");
-                Console.ResetColor(); // Reset color after printing
-            }
-            else if (!hideShips && cellValue == ' ')
-            {
-                Console.Write("  "); // Display empty space
-            }
-            else
-            {
-                Console.Write("X ");
+                    // Check if player's ship, show ships
+                    if (cellValue == 'S' && !hideShips)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue; //Color blue for ships
+                        Console.Write("S ");
+                        Console.ResetColor(); // Reset color
+                    } //Look for H
+                    else if (cellValue == 'H')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red; // Color Red for hits
+                        Console.Write("H ");
+                        Console.ResetColor(); // Reset color
+                    }
+                    //Look for M
+                    else if (cellValue == 'M')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow; // Color Yellow for miss
+                        Console.Write("M ");
+                        Console.ResetColor(); // Reset color
+                    } //Look for empty spaces
+                    else if (!hideShips && cellValue == ' ')
+                    {
+                        Console.Write("  "); // Empty space
+                    }
+                    else
+                    {
+                        Console.Write("X ");
+                    }
+                }
+                Console.WriteLine();
             }
         }
-        Console.WriteLine();
-    }
-}
 
-        // Method to process a shot on the board and return whether it's a hit
-public ShotResult ProcessShot(int[] target)
-{
-    int row = target[0];
-    int column = target[1];
-
-    if (board[row, column] == ' ')
-    {
-        board[row, column] = 'M';
-        return ShotResult.Miss; // Miss
-    }
-    else if (board[row, column] == 'S')
-    {
-        board[row, column] = 'H';
-        return ShotResult.Hit; // Hit
-    } 
-    else if (board[row, column] == 'H' || board[row, column] == 'M')
-    {
-        return ShotResult.AlreadyShot; // Already shot there
-    }
-    // Default return if none of the conditions match
-    return ShotResult.AlreadyShot;
-}
-
-        // Method to check if all ships on the board are destroyed
-      public bool AllShipsHit()
-{
-    foreach (Ship ship in ships)
-    {
-        if (!ship.IsHit())
-        {
-            return false;
-        }
-    }
-    
-    for (int i = 0; i < Size; i++)
-    {
-        for (int j = 0; j < Size; j++)
-        {
-            if (board[i, j] == 'S')
+        // process shot on game plan, return hit or not
+        public ShotResult ProcessShot(int[] target)
+        { //Extract row, columns values from array
+            int row = target[0];
+            int column = target[1];
+            //Check content of target coordinates
+            //If empty cell
+            if (Board[row, column] == ' ')
+            { //Show miss (M)
+                Board[row, column] = 'M';
+                return ShotResult.Miss; // Miss
+            } //If S (Ship)
+            else if (Board[row, column] == 'S')
+            { //Show H (hit)
+                Board[row, column] = 'H';
+                return ShotResult.Hit; // Hit
+            } //If M or H,
+            else if (Board[row, column] == 'H' || Board[row, column] == 'M')
             {
-                return false; // If any 'S' is found, at least one ship is not hit
+                return ShotResult.AlreadyShot; // Already shot there
             }
+            // if no condition match
+            return ShotResult.AlreadyShot;
         }
-    }
-    return true; // No 'S' found, all ships are hit
-}
-        // Method to get the value at a specific position on the board
+
+        //check all ships destroyed
+        public bool AllShipsHit()
+        { //loop to see if all shios are hit
+            foreach (Ship ship in Ships)
+            {
+                if (!ship.IsHit())
+                { //If there are ships not hit
+                    return false;
+                }
+            }
+            //Check for remaining ships
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                { //if remaining ships
+                    if (Board[i, j] == 'S')
+                    {
+                        return false; // If S, there are still ships
+                    }
+                }
+            }
+            return true; // No S = no ships
+        }
+
+        // get value, specific position on gameplan
         public char GetGamePlanValue(int row, int column)
         {
-            return board[row, column];
+            return Board[row, column];
         }
 
-        // Method to set the value at a specific position on the board
+        // set the value, specific position on gameplan
         public void SetGamePlanValue(int row, int column, char value)
         {
-            board[row, column] = value;
+            Board[row, column] = value;
         }
 
-        // Method to update the computer's board based on shots
-public void UpdateComputerGP(int[] target, ShotResult result)
-{
-    int row = target[0];
-    int column = target[1];
-
-    switch (result)
-    {
-        case ShotResult.Hit:
-            board[row, column] = 'H'; // Hit
-            break;
-        case ShotResult.Miss:
-            board[row, column] = 'M'; // Miss
-            break;
+        // Update computer's gameplan based on shots
+        public void UpdateComputerGP(int[] target, ShotResult result)
+        {
+            int row = target[0];
+            int column = target[1];
+            //Switch, to update with hit or miss
+            switch (result)
+            {
+                case ShotResult.Hit:
+                    Board[row, column] = 'H'; // Hit
+                    break;
+                case ShotResult.Miss:
+                    Board[row, column] = 'M'; // Miss
+                    break;
+            }
+        }
     }
-}
-}
 }
